@@ -1,0 +1,1 @@
+OpenQuorum — civic accountability infrastructure. Four live tools tracking public board vacancies across 26 states: Vacancy Clock, ImpactMap, SeatFinder, CivicQuest. Live at openquorum.us.com. Built by Pamela Epperson, Ph.D., PMP.
