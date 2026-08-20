@@ -696,6 +696,110 @@
 
   </div>
 
+  <!-- Suggest a missing board -->
+  <style>
+  .sb-wrap{background:#06111F;padding:72px 24px;border-top:1px solid rgba(29,158,117,0.15);font-family:'DM Sans',system-ui,sans-serif;}
+  .sb-inner{max-width:680px;margin:0 auto;}
+  .sb-badge{display:inline-flex;align-items:center;gap:7px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#4ECFA0;border:1px solid rgba(29,158,117,0.35);border-radius:20px;padding:5px 13px;margin-bottom:20px;}
+  .sb-badge-dot{width:6px;height:6px;border-radius:50%;background:#4ECFA0;box-shadow:0 0 8px #4ECFA0;}
+  .sb-title{font-family:'DM Serif Display',Georgia,serif;font-size:34px;line-height:1.1;color:#fff;margin:0 0 14px;}
+  .sb-lead{font-size:15px;line-height:1.6;color:rgba(255,255,255,0.72);margin:0 0 30px;}
+  .sb-form{display:flex;flex-direction:column;gap:18px;}
+  .sb-row{display:flex;gap:16px;flex-wrap:wrap;}
+  .sb-row .sb-field{flex:1;min-width:200px;}
+  .sb-field{display:flex;flex-direction:column;gap:6px;}
+  .sb-field label{font-size:13px;font-weight:500;color:rgba(255,255,255,0.85);letter-spacing:.01em;}
+  .sb-req{color:#4ECFA0;}
+  .sb-opt{color:rgba(255,255,255,0.45);font-weight:400;font-size:12px;}
+  .sb-field input,.sb-field textarea{background:#071420;border:1px solid rgba(29,158,117,0.25);border-radius:9px;padding:11px 13px;color:#fff;font-size:14px;font-family:inherit;transition:border-color .2s,box-shadow .2s;}
+  .sb-field input::placeholder,.sb-field textarea::placeholder{color:rgba(255,255,255,0.32);}
+  .sb-field input:focus,.sb-field textarea:focus{outline:none;border-color:#1D9E75;box-shadow:0 0 0 3px rgba(29,158,117,0.18);}
+  .sb-field textarea{resize:vertical;}
+  .sb-submit{align-self:flex-start;margin-top:4px;background:#1D9E75;color:#050D1A;font-family:inherit;font-size:14px;font-weight:600;letter-spacing:.02em;border:none;border-radius:9px;padding:12px 26px;cursor:pointer;transition:background .2s,transform .1s;}
+  .sb-submit:hover{background:#4ECFA0;}
+  .sb-submit:active{transform:translateY(1px);}
+  .sb-submit:disabled{opacity:.55;cursor:default;}
+  .sb-status{font-size:14px;margin:2px 0 0;min-height:1px;}
+  .sb-status.ok{color:#4ECFA0;}
+  .sb-status.err{color:#F07070;}
+  .sb-alt{font-size:13px;color:rgba(255,255,255,0.55);margin:26px 0 0;}
+  .sb-mail{color:#4ECFA0;text-decoration:none;border-bottom:1px solid rgba(29,158,117,0.35);transition:border-color .2s;}
+  .sb-mail:hover{border-color:#4ECFA0;}
+  @media(max-width:520px){.sb-title{font-size:27px;}.sb-wrap{padding:56px 20px;}}
+  </style>
+  <!-- Suggest a missing board -->
+  <div class="sb-wrap" id="suggest-a-board">
+    <div class="sb-inner">
+      <div class="sb-badge"><span class="sb-badge-dot"></span>All 50 states + DC now live</div>
+      <h2 class="sb-title">Suggest a missing board</h2>
+      <p class="sb-lead">We track governor-appointed seats on boards and commissions in every state. If we're missing one that matters to you, tell us &mdash; add a source if you have it &mdash; and we'll verify it against statute and add it. This is how the map gets more complete: neighbors pointing to the seats that shape their communities.</p>
+
+      <form class="sb-form" id="sb-form">
+        <input type="hidden" name="access_key" value="e5d4722a-2600-4341-a717-867021402309">
+        <input type="hidden" name="subject" value="OpenQuorum &mdash; Suggest a missing board">
+        <input type="hidden" name="from_name" value="OpenQuorum Suggest-a-Board">
+        <input type="checkbox" name="botcheck" class="sb-hp" style="display:none;" tabindex="-1" autocomplete="off">
+
+        <div class="sb-row">
+          <div class="sb-field">
+            <label for="sb-state">State</label>
+            <input id="sb-state" name="state" type="text" placeholder="e.g. Ohio" autocomplete="off">
+          </div>
+          <div class="sb-field">
+            <label for="sb-board">Board or commission <span class="sb-req">*</span></label>
+            <input id="sb-board" name="board" type="text" required placeholder="e.g. State Racing Commission">
+          </div>
+        </div>
+
+        <div class="sb-field">
+          <label for="sb-source">Source link <span class="sb-opt">(optional, but it speeds us up)</span></label>
+          <input id="sb-source" name="source" type="url" placeholder="Statute, agency page, or news link">
+        </div>
+
+        <div class="sb-field">
+          <label for="sb-notes">Anything else <span class="sb-opt">(optional)</span></label>
+          <textarea id="sb-notes" name="notes" rows="3" placeholder="Why this board matters, seat counts you know of, vacancies you've spotted&hellip;"></textarea>
+        </div>
+
+        <div class="sb-field">
+          <label for="sb-email">Your email <span class="sb-opt">(optional &mdash; only if you'd like a reply)</span></label>
+          <input id="sb-email" name="email" type="email" placeholder="you@example.com">
+        </div>
+
+        <button type="submit" class="sb-submit">Send suggestion &rarr;</button>
+        <p class="sb-status" id="sb-status" role="status" aria-live="polite"></p>
+      </form>
+
+      <p class="sb-alt">Prefer email? Write us directly at
+        <a class="sb-mail" href="mailto:support@openquorum.us.com?subject=Suggest%20a%20missing%20board&body=Board%2Fcommission%3A%20%0AState%3A%20%0ASource%20link%3A%20%0ANotes%3A%20">support@openquorum.us.com</a>.
+      </p>
+    </div>
+  </div>
+
+  <script>
+  (function(){
+    var f=document.getElementById('sb-form');if(!f)return;
+    var s=document.getElementById('sb-status');
+    f.addEventListener('submit',function(e){
+      e.preventDefault();
+      var btn=f.querySelector('.sb-submit');
+      var key=f.querySelector('input[name=access_key]').value;
+      if(key.indexOf('PLACEHOLDER')>-1){s.className='sb-status err';s.textContent='Form not yet connected. Please use the email link below for now.';return;}
+      s.className='sb-status';s.textContent='Sending…';btn.disabled=true;
+      var data=Object.fromEntries(new FormData(f).entries());
+      fetch('https://api.web3forms.com/submit',{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(data)})
+        .then(function(r){return r.json();})
+        .then(function(j){
+          if(j.success){f.reset();s.className='sb-status ok';s.textContent='Thank you — got it. We’ll verify and add it.';}
+          else{s.className='sb-status err';s.textContent='Something went wrong. Please try the email link below.';}
+          btn.disabled=false;
+        })
+        .catch(function(){s.className='sb-status err';s.textContent='Network error. Please try the email link below.';btn.disabled=false;});
+    });
+  })();
+  </script>
+
+
   <!-- Footer -->
   <div class="footer-wrap">
     <div class="footer">
