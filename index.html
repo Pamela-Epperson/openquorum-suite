@@ -496,6 +496,10 @@
     </div>
   </div>
 
+  <div style="margin:8px 0 2px;">
+    <button data-looq-play style="display:inline-flex;align-items:center;gap:8px;background:#1D9E75;color:#050D1A;font-family:'DM Sans',system-ui,sans-serif;font-weight:600;font-size:14px;border:none;border-radius:10px;padding:12px 22px;cursor:pointer;">▶&nbsp; Walk me through it</button>
+  </div>
+
   <!-- App Grid -->
   <div class="grid">
 
@@ -572,7 +576,6 @@
           <div class="app-name"><span class="oq">Open</span>Quorum · <span style="color:rgba(255,255,255,0.7)">SeatFinder</span></div>
           <div class="app-sub">AI skills-to-seat matching engine</div>
         </div>
-        <span class="app-pill sf-pill">Claude API</span>
       </div>
       <div class="app-body">
         <div class="sf-profile">
@@ -608,7 +611,6 @@
           <div class="app-name"><span class="oq">Open</span>Quorum · <span style="color:rgba(255,255,255,0.7)">CivicQuest</span></div>
           <div class="app-sub">Board governance simulation · classroom-ready</div>
         </div>
-        <span class="app-pill cq-pill">Week 7</span>
       </div>
       <div class="app-body">
         <div class="cq-boards">
@@ -862,5 +864,10 @@
   </div>
 
 </div>
+<script defer src="/looq-walkthrough.js"></script>
+<script>
+(function(){var m={vc:"https://vacancyclock.us.com",im:"https://impactmap.us.com",sf:"https://seatfinder.us.com",cq:"https://civicquest.us.com"};
+document.querySelectorAll(".app-card").forEach(function(c){var k=["vc","im","sf","cq"].find(function(x){return c.classList.contains(x);});if(!k)return;c.style.cursor="pointer";c.setAttribute("role","link");c.setAttribute("tabindex","0");c.setAttribute("aria-label","Open the "+k.toUpperCase()+" app");function go(){window.open(m[k],"_blank","noopener");}c.addEventListener("click",go);c.addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();go();}});});})();
+</script>
 </body>
 </html>
