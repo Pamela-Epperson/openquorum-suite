@@ -68,8 +68,8 @@
         <p class="lqw-line" style="margin-bottom:4px;">Across the country:</p>
         <div class="lqw-nums" aria-hidden="true">
           <div><span class="lqw-fn" data-stat="jurisdictions">51</span><span class="lqw-fl">states + DC</span></div>
-          <div><span class="lqw-fn" data-stat="boards">430</span><span class="lqw-fl">boards</span></div>
-          <div><span class="lqw-fn" data-stat="seats">4,951</span><span class="lqw-fl">seats</span></div>
+          <div><span class="lqw-fn" data-stat="boards">447</span><span class="lqw-fl">boards</span></div>
+          <div><span class="lqw-fn" data-stat="seats">5,122</span><span class="lqw-fl">seats</span></div>
         </div>
       </div>
       <div class="lqw-scene" data-dur="7500">
@@ -134,7 +134,7 @@
     [].slice.call(film.querySelectorAll('.lqw-eye')).forEach(function(el){ el.innerHTML = makeEye(el.getAttribute('data-iris')); });
 
     /* dynamic numbers (site root /oq-stats.json, with baked fallback) */
-    var FALLBACK={jurisdictions:51,boards:430,seats:4951};
+    var FALLBACK={jurisdictions:51,boards:447,seats:5122};
     function paint(s){ film.querySelectorAll('[data-stat]').forEach(function(el){ var k=el.getAttribute('data-stat'); if(s[k]!=null) el.setAttribute('data-count',s[k]); }); }
     paint(FALLBACK);
     fetch('/oq-stats.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).then(function(j){ if(j) paint(Object.assign({},FALLBACK,j)); }).catch(function(){});
