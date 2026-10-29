@@ -68,12 +68,15 @@
         <p class="lqw-line" style="margin-bottom:4px;">Across the country:</p>
         <div class="lqw-nums" aria-hidden="true">
           <div><span class="lqw-fn" data-stat="jurisdictions">51</span><span class="lqw-fl">states + DC</span></div>
-          <div><span class="lqw-fn" data-stat="boards">516</span><span class="lqw-fl">boards</span></div>
-          <div><span class="lqw-fn" data-stat="seats">5,695</span><span class="lqw-fl">seats</span></div>
+          <div><span class="lqw-fn" data-stat="boards">504</span><span class="lqw-fl">boards</span></div>
+          <div><span class="lqw-fn" data-stat="seats">5,465</span><span class="lqw-fl">seats</span></div>
         </div>
       </div>
       <div class="lqw-scene" data-dur="7500">
         <p class="lqw-line">And right now, hundreds of those chairs are empty. Not because the sky is falling &mdash; <span class="lqw-hl">because no one showed you the door.</span></p>
+      </div>
+      <div class="lqw-scene" data-dur="7500">
+        <p class="lqw-line">Even a filled seat can fail you. The law passes &mdash; the funding never does. <span class="lqw-hl">Passed, not paid.</span> We put that gap on the map too.</p>
       </div>
       <div class="lqw-scene" data-dur="7500">
         <p class="lqw-line">The people already in those seats aren&rsquo;t more qualified than you. They&rsquo;re more <span class="lqw-hl">visible.</span></p>
@@ -134,7 +137,7 @@
     [].slice.call(film.querySelectorAll('.lqw-eye')).forEach(function(el){ el.innerHTML = makeEye(el.getAttribute('data-iris')); });
 
     /* dynamic numbers (site root /oq-stats.json, with baked fallback) */
-    var FALLBACK={jurisdictions:51,boards:516,seats:5695};
+    var FALLBACK={jurisdictions:51,boards:504,seats:5465};
     function paint(s){ film.querySelectorAll('[data-stat]').forEach(function(el){ var k=el.getAttribute('data-stat'); if(s[k]!=null) el.setAttribute('data-count',s[k]); }); }
     paint(FALLBACK);
     fetch('/oq-stats.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).then(function(j){ if(j) paint(Object.assign({},FALLBACK,j)); }).catch(function(){});
