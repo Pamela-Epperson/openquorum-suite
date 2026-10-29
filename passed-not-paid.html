@@ -150,8 +150,13 @@ section{padding:34px 0;}
 </div></footer>
 
 <script>
-// ── Data (copy of passed-not-paid.config.js; production imports the config) ──
-const GAPS = [
+// ── Data ──
+// FALLBACK: the vetted cases, baked in so the page always renders (even offline).
+// At load we fetch /pnp-gaps.json (published by the pnp-sync pipeline from the
+// single source of truth, src/passed-not-paid.config.js) and, if present, render
+// from that instead — so adding a vetted case to the config updates this page
+// with no HTML edit. Keep this array in sync as the known-good floor.
+const FALLBACK_GAPS = [
   {id:"us-hava-requirements-2002",tier:"crumbs",status:"open",domain:"justice",barPct:0,
    title:"Fix the voting machines — then the money was cut to zero",law:"Help America Vote Act of 2002",
    authorized:"~$3.86B incl. requirements payments",appropriated:"Requirements payments zeroed FY05–07",
@@ -210,6 +215,7 @@ const GAPS = [
    note:"Lifecycle: lapsed 2023. Flips if Congress reauthorizes and backfills FY2024–25.",
    sources:[["NACo","https://www.naco.org/news/usfs-begins-disbursement-revenue-sharing-payments-amid-lapse-srs-funding"],["KUOW","https://www.kuow.org/politics/2025-08-07/parts-of-rural-wa-pinched-by-lapse-in-federal-payments-to-offset-lost-logging-revenue"]]},
 ];
+let GAPS = FALLBACK_GAPS; // overridden by /pnp-gaps.json at load if available
 
 const STCLASS = s => ({open:"s-open",resolved:"s-resolved",lapsed:"s-lapsed"}[s]);
 const STLABEL = {open:"Open",resolved:"Resolved",lapsed:"Lapsed"};
@@ -261,24 +267,34 @@ function closedSection(){
   </section>`;
 }
 
-document.getElementById("tiers").innerHTML =
-  tierSection("crumbs","Crumbs","Strict · ≤5% or $0",
-    "Authorized or mandated by law — and funded at zero, or a token under five cents on the dollar. The rarest, starkest cases: the promise plainly made, the money plainly withheld.") +
-  tierSection("shortfall","Pennies on the Dollar","Target-shortfall",
-    "Funded — but far below what the statute pledged. A commitment honored in fractions: thirteen cents where forty were promised.") +
-  closedSection();
+function renderPNP(){
+  document.getElementById("tiers").innerHTML =
+    tierSection("crumbs","Crumbs","Strict · ≤5% or $0",
+      "Authorized or mandated by law — and funded at zero, or a token under five cents on the dollar. The rarest, starkest cases: the promise plainly made, the money plainly withheld.") +
+    tierSection("shortfall","Pennies on the Dollar","Target-shortfall",
+      "Funded — but far below what the statute pledged. A commitment honored in fractions: thirteen cents where forty were promised.") +
+    closedSection();
 
-// headline stats from the data
-const live = GAPS.filter(g=>g.status!=="resolved");
-const crumbsLive = live.filter(g=>g.tier==="crumbs").length;
-const shortfallLive = live.filter(g=>g.tier==="shortfall").length;
-const closedN = GAPS.filter(g=>g.status==="resolved").length;
-document.getElementById("stats").innerHTML = [
-  [live.length,"Live federal gaps"],
-  [crumbsLive,"'Crumbs' — ≤5% or $0"],
-  [shortfallLive,"'Pennies on the dollar'"],
-  [closedN,"Closed · proof it's fixable"],
-].map(([n,k])=>`<div class="stat"><div class="n">${n}</div><div class="k">${k}</div></div>`).join("");
+  // headline stats from the data
+  const live = GAPS.filter(g=>g.status!=="resolved");
+  const crumbsLive = live.filter(g=>g.tier==="crumbs").length;
+  const shortfallLive = live.filter(g=>g.tier==="shortfall").length;
+  const closedN = GAPS.filter(g=>g.status==="resolved").length;
+  document.getElementById("stats").innerHTML = [
+    [live.length,"Live federal gaps"],
+    [crumbsLive,"'Crumbs' — ≤5% or $0"],
+    [shortfallLive,"'Pennies on the dollar'"],
+    [closedN,"Closed · proof it's fixable"],
+  ].map(([n,k])=>`<div class="stat"><div class="n">${n}</div><div class="k">${k}</div></div>`).join("");
+}
+
+// Render immediately from the embedded fallback (always works), then upgrade to
+// the live data file if the pnp-sync pipeline has published one same-origin.
+renderPNP();
+fetch("/pnp-gaps.json", {cache:"no-store"})
+  .then(r => r.ok ? r.json() : null)
+  .then(j => { const arr = Array.isArray(j) ? j : (j && j.gaps); if (arr && arr.length) { GAPS = arr; renderPNP(); } })
+  .catch(() => {});
 </script>
 </body>
 </html>
