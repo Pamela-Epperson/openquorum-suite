@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!--
+  ImpactMap · "Passed, Not Paid" — Phase 1 (federal, two tiers)
+  DATA-DRIVEN render layer. Cards are generated from the GAPS array below, which is
+  a copy of passed-not-paid.config.js (the source of truth, destined for
+  openquorum-vacancy-clock/src/). In production ImpactMap imports the config;
+  here the data is embedded so the page is self-contained and previews offline.
+  Tiers: "crumbs" (strict ≤5%/$0) · "shortfall" (pennies on the dollar).
+-->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Passed, Not Paid — ImpactMap · OpenQuorum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#050D1A;--bg-s:#0A1A2E;--bg-c:#071420;
+  --teal:#1D9E75;--teal-d:rgba(29,158,117,0.12);--teal-b:rgba(29,158,117,0.28);
+  --gold:#C9A84C;--gold-b:#F0C842;--gold-d:rgba(201,168,76,0.12);--gold-bd:rgba(201,168,76,0.22);
+  --purple:#534AB7;--purple-d:rgba(83,74,183,0.12);
+  --red:#D9553B;--red-d:rgba(217,85,59,0.14);--red-b:rgba(217,85,59,0.35);
+  --t1:#FFF;--t2:rgba(255,255,255,.70);--t3:rgba(255,255,255,.45);--t4:rgba(255,255,255,.22);
+  --border:rgba(201,168,76,0.15);
+  --ff-d:'DM Serif Display',Georgia,serif;--ff-b:'DM Sans',system-ui,sans-serif;--ff-m:'Montserrat',system-ui,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--t1);font-family:var(--ff-b);line-height:1.6;overflow-x:hidden;}
+.wrap{max-width:1180px;margin:0 auto;padding:0 32px;}
+
+/* HERO */
+.hero{position:relative;padding:92px 0 48px;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:
+  radial-gradient(ellipse 55% 60% at 2% 0%, rgba(201,168,76,0.16) 0%, transparent 55%),
+  radial-gradient(ellipse 45% 55% at 95% 10%, rgba(217,85,59,0.10) 0%, transparent 52%),
+  radial-gradient(ellipse 40% 60% at 70% 100%, rgba(29,158,117,0.07) 0%, transparent 50%);pointer-events:none;}
+.hero .wrap{position:relative;z-index:1;}
+.eyebrow{font-family:var(--ff-m);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);
+  margin-bottom:22px;display:flex;align-items:center;gap:11px;}
+.eyebrow::before{content:'';width:34px;height:1px;background:var(--gold);opacity:.6;}
+.hero h1{font-family:var(--ff-d);line-height:1.04;margin-bottom:6px;}
+.hero h1 .l1{display:block;font-size:clamp(40px,5.2vw,66px);}
+.hero h1 .l2{display:block;font-size:clamp(40px,5.2vw,66px);color:var(--gold);font-style:italic;}
+.hero-pivot{font-family:var(--ff-d);font-style:italic;font-size:clamp(18px,2vw,25px);color:var(--teal);margin:18px 0 20px;}
+.hero-body{font-size:16.5px;color:var(--t2);line-height:1.78;max-width:640px;}
+.hero-body b{color:var(--t1);}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);
+  border-radius:10px;overflow:hidden;margin:44px 0 6px;}
+.stat{background:var(--bg-c);padding:24px 22px;}
+.stat .n{font-family:var(--ff-d);font-size:clamp(26px,3vw,38px);color:var(--gold-b);line-height:1;}
+.stat .k{font-family:var(--ff-m);font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--t3);margin-top:9px;}
+
+/* TIER SECTION */
+section{padding:34px 0;}
+.tier-head{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:6px;}
+.tier-head h2{font-family:var(--ff-d);font-size:clamp(25px,2.8vw,34px);}
+.tier-head .tag{font-family:var(--ff-m);font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:30px;}
+.tier-head.crumbs h2{color:var(--gold);}
+.tier-head.crumbs .tag{color:var(--gold-b);background:var(--gold-d);border:1px solid var(--gold-bd);}
+.tier-head.shortfall h2{color:#6FD3AE;}
+.tier-head.shortfall .tag{color:#6FD3AE;background:var(--teal-d);border:1px solid var(--teal-b);}
+.tier-head.closed h2{color:#7FB8A0;}
+.tier-head.closed .tag{color:#6FD3AE;background:var(--teal-d);border:1px solid var(--teal-b);}
+.card.is-resolved{opacity:.93;}
+.card.is-resolved.crumbs,.card.is-resolved.shortfall{border-left-color:var(--teal-b);}
+.tier-sub{font-size:14.5px;color:var(--t3);max-width:680px;margin-bottom:24px;line-height:1.6;}
+
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
+.card{background:linear-gradient(170deg,var(--bg-s),var(--bg-c));border:1px solid var(--border);border-radius:13px;
+  padding:25px 25px 20px;transition:border-color .2s,transform .2s;}
+.card.crumbs{border-left:3px solid var(--gold-bd);}
+.card.shortfall{border-left:3px solid var(--teal-b);}
+.card:hover{border-color:var(--gold-bd);transform:translateY(-2px);}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:13px;}
+.badges{display:flex;gap:7px;flex-wrap:wrap;}
+.badge{font-family:var(--ff-m);font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;padding:4px 9px;border-radius:4px;font-weight:500;}
+.b-dom{background:rgba(255,255,255,.05);color:var(--t2);border:1px solid var(--t4);}
+.status{font-family:var(--ff-m);font-size:10px;letter-spacing:.08em;text-transform:uppercase;display:inline-flex;align-items:center;gap:7px;white-space:nowrap;padding-top:3px;}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;}
+.s-open{color:#E8826B;} .s-open .dot{background:var(--red);}
+.s-resolved{color:#6FD3AE;} .s-resolved .dot{background:var(--teal);}
+.s-lapsed{color:var(--gold-b);} .s-lapsed .dot{background:var(--gold-b);}
+.card h3{font-family:var(--ff-d);font-size:20px;line-height:1.18;margin-bottom:3px;}
+.card .yr{font-family:var(--ff-m);font-size:11px;letter-spacing:.06em;color:var(--t3);margin-bottom:16px;}
+
+.pb{margin:4px 0 13px;}
+.pb-row{display:flex;justify-content:space-between;font-family:var(--ff-m);font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--t3);margin-bottom:7px;}
+.pb-track{height:13px;border-radius:7px;background:var(--red-d);border:1px solid var(--red-b);overflow:hidden;}
+.pb-fill{height:100%;background:linear-gradient(90deg,var(--teal),#2ABF8E);}
+.pb-legend{display:flex;justify-content:space-between;margin-top:7px;font-size:12px;}
+.pb-paid{color:#6FD3AE;} .pb-gap{color:#E8826B;font-weight:600;}
+.pb-track.resolved{background:var(--teal-d);border-color:var(--teal-b);}
+.pb-was{color:var(--t3);font-style:italic;}
+
+.line{font-size:13px;color:var(--t2);line-height:1.55;margin:3px 0;}
+.line b{color:var(--t1);}
+.kv{display:flex;gap:8px;font-size:12.5px;margin:5px 0;}
+.kv .k{font-family:var(--ff-m);font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:var(--gold);white-space:nowrap;padding-top:3px;min-width:74px;}
+.kv .v{color:var(--t2);line-height:1.5;}
+.carries{display:flex;gap:9px;background:rgba(255,255,255,.03);border-left:2px solid var(--gold-bd);padding:9px 12px;border-radius:0 6px 6px 0;margin:11px 0;}
+.carries .k{font-family:var(--ff-m);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);white-space:nowrap;padding-top:2px;}
+.carries .v{font-size:12.5px;color:var(--t2);line-height:1.5;}
+.note{font-size:11.5px;color:var(--t3);font-style:italic;line-height:1.5;margin:8px 0 2px;}
+.src{display:flex;flex-wrap:wrap;gap:7px;border-top:1px solid var(--border);padding-top:12px;margin-top:11px;}
+.src a{font-family:var(--ff-m);font-size:10px;letter-spacing:.03em;color:var(--t3);text-decoration:none;border:1px solid var(--t4);border-radius:4px;padding:4px 9px;transition:all .2s;}
+.src a:hover{color:var(--gold-b);border-color:var(--gold-bd);}
+.src a::before{content:'↗ ';opacity:.6;}
+
+.method{background:var(--bg-c);border:1px solid var(--border);border-radius:13px;padding:28px 32px;margin-top:20px;}
+.method h3{font-family:var(--ff-d);font-size:22px;color:var(--gold);margin-bottom:14px;}
+.method p{font-size:13.5px;color:var(--t2);line-height:1.72;margin-bottom:11px;max-width:860px;}
+.method b{color:var(--t1);}
+.foot{text-align:center;padding:46px 0 42px;}
+.foot .ethos{font-family:var(--ff-d);font-style:italic;font-size:clamp(19px,2.3vw,28px);line-height:1.3;}
+.foot .ethos .g{color:var(--gold);}
+.foot .sub{font-size:13px;color:var(--t3);margin-top:16px;}
+.flag{display:inline-block;font-family:var(--ff-m);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-b);
+  border:1px solid var(--gold-bd);background:var(--gold-d);border-radius:30px;padding:7px 16px;margin-bottom:24px;}
+@media(max-width:860px){.stats{grid-template-columns:repeat(2,1fr);}.grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<header class="hero"><div class="wrap">
+  <div class="eyebrow">ImpactMap · New Dimension · Phase 1 (Federal)</div>
+  <h1><span class="l1">Passed,</span><span class="l2">Not Paid.</span></h1>
+  <div class="hero-pivot">A law is a promise. An appropriation is whether anyone meant it.</div>
+  <p class="hero-body">Every case below is a federal law that <b>passed</b> — signed, on the books — where the money to carry it out was <b>never fully appropriated</b>. We sort them by how little arrived: <b>crumbs</b> (zero, or a token under 5% of the promise) and <b>pennies on the dollar</b> (funded, but far below what the law pledged). Not a conspiracy — a gap between <b>passed</b> and <b>paid</b>, and a name for who carries it.</p>
+  <div class="stats" id="stats"></div>
+</div></header>
+
+<main class="wrap" id="tiers"></main>
+
+<section class="wrap"><div class="method">
+  <h3>How this is built</h3>
+  <p><b>Prove-it.</b> Every case is drawn from the public record — statutes, appropriations acts, CRS/GAO analyses, and reporting that cites them. No FOIA, no invented figures: every amount traces to the statute or an authoritative source, and each card carries its citations. Where a figure comes from an advocate, a legislator, or a third-party aggregator, the card says so.</p>
+  <p><b>Two tiers, one bar.</b> <span style="color:var(--gold-b)">Crumbs</span> is the strict core — authorized or mandated, but <b>$0 or ≤~5%</b> appropriated. <span style="color:#6FD3AE">Pennies on the dollar</span> is funded, but far below the statutory promise (IDEA's ~13% against a 40% commitment; LWCF at roughly half). Keeping them separate keeps the strict core unassailable.</p>
+  <p><b>Not the mirror image.</b> This tracks laws <b>authorized but not funded</b> (promise withheld). It is <i>not</i> CBO's "expired authorizations" list — programs <b>funded without a current authorization</b> ("zombie" spending). Those are opposites; that data is a candidate for a separate future lane, not this one.</p>
+  <p><b>Non-partisan by construction</b> — the cases span laws signed by both parties. <b>Phase 1 is federal.</b> State and local gaps (where the matching is harder) come in a later phase.</p>
+</div></section>
+
+<footer class="foot"><div class="wrap">
+  <span class="flag">Phase 1 · Federal · Prototype</span>
+  <div class="ethos">The vote is public. <span class="g">The appropriation is where the meaning hides.</span><br>Opacity was designed. So is the map.</div>
+  <div class="sub">ImpactMap · OpenQuorum — The Gap Between Passed and Paid</div>
+</div></footer>
+
+<script>
+// ── Data (copy of passed-not-paid.config.js; production imports the config) ──
+const GAPS = [
+  {id:"us-hava-requirements-2002",tier:"crumbs",status:"open",domain:"justice",barPct:0,
+   title:"Fix the voting machines — then the money was cut to zero",law:"Help America Vote Act of 2002",
+   authorized:"~$3.86B incl. requirements payments",appropriated:"Requirements payments zeroed FY05–07",
+   fundedLabel:"$0 requirements funding, FY05–07",gapLabel:"~$672–727M unappropriated",
+   constituent:"County election offices modernizing registration & accessible voting",
+   note:"HAVA disbursed billions over time; the gap is the FY05–07 window when requirements funding was zeroed.",
+   sources:[["League of Women Voters","https://www.lwv.org/node/934698"],["Senate Rules Cmte","https://www.rules.senate.gov/news/minority-news/schumer-pushes-for-full-funding-for-voting-rights-legislation"]]},
+  {id:"us-emmett-till-coldcase-2007",tier:"crumbs",status:"open",domain:"justice",barPct:0,
+   title:"Civil-rights cold cases: the funding never came",law:"Emmett Till Unsolved Civil Rights Crime Act (2007)",
+   authorized:"~$13.5M/yr (FY08–17): $10M to DOJ/FBI, $2M state/local grants, $1.5M CRS",appropriated:"$0 — DOJ: funds 'have not been appropriated'; existing resources diverted",
+   fundedLabel:"$0 appropriated",gapLabel:"~$13.5M/yr unfunded",
+   constituent:"Families seeking justice in unsolved civil-rights-era killings",
+   note:"Authoritative: DOJ Attorney General's First Annual Report (2009). A separate OJP grant program (post-2016) later gave ~$2–3M/yr to state/local — a fraction of the authorization.",
+   sources:[["DOJ AG 1st Annual Report","https://www.justice.gov/sites/default/files/crt/legacy/2015/06/18/tillreport_01.pdf"],["Act (congress.gov)","https://www.congress.gov/bill/110th-congress/senate-bill/535"]]},
+  {id:"us-real-id-2005",tier:"crumbs",status:"open",domain:"justice",barPct:2,
+   title:"A national ID standard, funded at two cents on the dollar",law:"REAL ID Act of 2005",
+   authorized:"National ID standards; DHS est. ~$3.9B state cost",appropriated:"≈ $90M in federal grants",
+   fundedLabel:"~2% of estimated cost",gapLabel:"~$3.8B gap",
+   constituent:"State DMVs and the residents who fund them",
+   note:"Deliverable-based: the $ is DHS's own cost estimate, not an authorized amount.",
+   sources:[["ACLU — Fuzzy Math","https://www.aclu.org/documents/fuzzy-math-and-real-cost-real-id"],["NGA testimony","https://www.nga.org/testimony/testimony-real-id-western-hemisphere-travel-initiative"]]},
+  {id:"us-first-step-act-2018",tier:"crumbs",status:"open",domain:"justice",barPct:0,
+   title:"The signature prison-reform law, zeroed out in year one",law:"First Step Act of 2018",
+   authorized:"$75M/yr (FY19–23) for recidivism programs",appropriated:"$0 appropriated in FY2019 (DOJ redirected internal funds)",
+   fundedLabel:"0% in FY2019",gapLabel:"$75M unfunded, year one",
+   constituent:"Incarcerated people eligible for earned-time programming, and the BOP",
+   note:"Later appropriations provided partial funding; the year-one $0 is the documented gap.",
+   sources:[["CRS R45558","https://www.congress.gov/crs-product/R45558"],["Brennan Center","https://www.brennancenter.org/our-work/research-reports/what-first-step-act-and-whats-happening-it"]]},
+  {id:"us-interstate-1944",tier:"crumbs",status:"resolved",domain:"environment",barPct:0,
+   title:"An interstate system — on paper for twelve years",law:"Federal-Aid Highway Act of 1944",
+   authorized:"The National System of Interstate Highways",appropriated:"$0 construction for ~8 yrs; token $25M in 1952",
+   fundedLabel:"$0 construction, 1944–52",gapLabel:"The whole network, unbuilt",closedLabel:"Funded 1956 (Highway Trust Fund)",wasLabel:"was $0 for ~8 years",
+   constituent:"The traveling public — the plan, but not the pavement",
+   note:"Resolved by the 1956 Highway Trust Fund — proof these gaps can close.",
+   sources:[["FHWA Highway History","https://www.fhwa.dot.gov/highwayhistory/data/page01.cfm"],["Federal-Aid Highway Act of 1956","https://en.wikipedia.org/wiki/Federal-Aid_Highway_Act_of_1956"]]},
+
+  {id:"us-idea-40pct-1975",tier:"shortfall",status:"open",domain:"education",barPct:33,
+   title:"Special education's 'forty percent' promise",law:"IDEA (1975)",
+   authorized:"40% of the excess cost of special education",appropriated:"~13% of excess cost (FY2020)",
+   fundedLabel:"~13% delivered of a 40% promise",gapLabel:"27-pt gap, ~50 yrs",
+   constituent:"Local school districts and property taxpayers",
+   note:"Target-shortfall: the 40% is a commitment, not a hard appropriation cap. Peaked near ~33% once (2009).",
+   sources:[["House Ed & Workforce — IDEA Funding Gap","https://edworkforce.house.gov/UploadedFiles/IDEA_Funding_Gap.pdf"],["New America","https://newamerica.org/education-policy/edcentral/fully-funding-idea"]]},
+  {id:"us-lwcf-1965",tier:"shortfall",status:"resolved",domain:"environment",barPct:55,
+   title:"The conservation fund that collected, then sat",law:"Land & Water Conservation Fund (1965)",
+   authorized:"$900M per year (offshore-drilling royalties)",appropriated:"~half most years (e.g. ~$495M FY2020)",
+   fundedLabel:"~55% in a typical year",gapLabel:"~$400M/yr diverted",closedLabel:"Full $900M mandatory since 2020",wasLabel:"was ~half for decades",
+   constituent:"State parks, trails, and public-lands projects",
+   note:"Resolved: the Great American Outdoors Act (2020) made the full $900M mandatory.",
+   sources:[["CRS RL33531","https://www.everycrsreport.com/reports/RL33531.html"],["CRS IF12256","https://www.congress.gov/crs_external_products/IF/PDF/IF12256/IF12256.2.pdf"]]},
+  {id:"us-secure-rural-schools-2000",tier:"shortfall",status:"lapsed",domain:"education",barPct:20,
+   title:"Rural counties, cut off from the promise",law:"Secure Rural Schools Act (2000)",
+   authorized:"Revenue-sharing to timber counties",appropriated:"Reauthorization lapsed 2023; ~80% cut",
+   fundedLabel:"~20% fallback after the lapse",gapLabel:"~80% cut across 41 states",
+   constituent:"Rural schools and county roads in 41 states",
+   note:"Lifecycle: lapsed 2023. Flips if Congress reauthorizes and backfills FY2024–25.",
+   sources:[["NACo","https://www.naco.org/news/usfs-begins-disbursement-revenue-sharing-payments-amid-lapse-srs-funding"],["KUOW","https://www.kuow.org/politics/2025-08-07/parts-of-rural-wa-pinched-by-lapse-in-federal-payments-to-offset-lost-logging-revenue"]]},
+];
+
+const STCLASS = s => ({open:"s-open",resolved:"s-resolved",lapsed:"s-lapsed"}[s]);
+const STLABEL = {open:"Open",resolved:"Resolved",lapsed:"Lapsed"};
+
+function card(g){
+  const resolved = g.status === "resolved";
+  const fill = resolved ? 100 : Math.max(2, g.barPct); // keep a sliver visible even at 0
+  const leftLabel  = resolved ? g.closedLabel : g.fundedLabel;
+  const rightLabel = resolved ? g.wasLabel    : g.gapLabel;
+  const rightClass = resolved ? "pb-was"      : "pb-gap";
+  const rowRight   = resolved ? "Now" : "Delivered";
+  return `<article class="card ${g.tier}${resolved?' is-resolved':''}">
+    <div class="card-top">
+      <div class="badges"><span class="badge b-dom">${g.domain}</span></div>
+      <span class="status ${STCLASS(g.status)}"><span class="dot"></span>${STLABEL[g.status]}</span>
+    </div>
+    <h3>${g.title}</h3>
+    <div class="yr">${g.law}</div>
+    <div class="pb">
+      <div class="pb-row"><span>Promised</span><span>${rowRight}</span></div>
+      <div class="pb-track${resolved?' resolved':''}"><div class="pb-fill" style="width:${fill}%"></div></div>
+      <div class="pb-legend"><span class="pb-paid">${leftLabel}</span><span class="${rightClass}">${rightLabel}</span></div>
+    </div>
+    <div class="kv"><span class="k">Authorized</span><span class="v">${g.authorized}</span></div>
+    <div class="kv"><span class="k">Appropriated</span><span class="v">${g.appropriated}</span></div>
+    <div class="carries"><span class="k">Who carries it</span><span class="v">${g.constituent}</span></div>
+    <div class="note">${g.note}</div>
+    <div class="src">${g.sources.map(s=>`<a href="${s[1]}">${s[0]}</a>`).join("")}</div>
+  </article>`;
+}
+
+function tierSection(tier, title, tag, sub){
+  const items = GAPS.filter(g=>g.tier===tier && g.status!=="resolved"); // live gaps only
+  if(!items.length) return "";
+  return `<section>
+    <div class="tier-head ${tier}"><h2>${title}</h2><span class="tag">${tag}</span></div>
+    <p class="tier-sub">${sub}</p>
+    <div class="grid">${items.map(card).join("")}</div>
+  </section>`;
+}
+
+function closedSection(){
+  const items = GAPS.filter(g=>g.status==="resolved");
+  if(!items.length) return "";
+  return `<section>
+    <div class="tier-head closed"><h2>Closed</h2><span class="tag">Proof it's fixable</span></div>
+    <p class="tier-sub">Gaps that were eventually funded — a promise kept, late. Proof that "passed, not paid" isn't permanent.</p>
+    <div class="grid">${items.map(card).join("")}</div>
+  </section>`;
+}
+
+document.getElementById("tiers").innerHTML =
+  tierSection("crumbs","Crumbs","Strict · ≤5% or $0",
+    "Authorized or mandated by law — and funded at zero, or a token under five cents on the dollar. The rarest, starkest cases: the promise plainly made, the money plainly withheld.") +
+  tierSection("shortfall","Pennies on the Dollar","Target-shortfall",
+    "Funded — but far below what the statute pledged. A commitment honored in fractions: thirteen cents where forty were promised.") +
+  closedSection();
+
+// headline stats from the data
+const live = GAPS.filter(g=>g.status!=="resolved");
+const crumbsLive = live.filter(g=>g.tier==="crumbs").length;
+const shortfallLive = live.filter(g=>g.tier==="shortfall").length;
+const closedN = GAPS.filter(g=>g.status==="resolved").length;
+document.getElementById("stats").innerHTML = [
+  [live.length,"Live federal gaps"],
+  [crumbsLive,"'Crumbs' — ≤5% or $0"],
+  [shortfallLive,"'Pennies on the dollar'"],
+  [closedN,"Closed · proof it's fixable"],
+].map(([n,k])=>`<div class="stat"><div class="n">${n}</div><div class="k">${k}</div></div>`).join("");
+</script>
+</body>
+</html>
